@@ -14,6 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+
+
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="6ollv9ew74" />
@@ -25,7 +27,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".guideInfo"></activity>
+        <activity android:name=".MyList"></activity>
     </application>
 
 </manifest>

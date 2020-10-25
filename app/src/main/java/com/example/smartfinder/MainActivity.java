@@ -50,11 +50,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
 
-        ImageView imageView = (ImageView)findViewById(R.id.img);
-
-
-        imageView.setVisibility(View.INVISIBLE);
-
 
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -84,17 +79,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             case R.id.action_settings2:
 
+                Intent intent2 = new Intent(getApplicationContext(), guideInfo.class);
+                startActivity(intent2);
 
-                ImageView img =(ImageView)findViewById(R.id.img);
-                if(img.getVisibility()==View.VISIBLE){
-                    img.setVisibility(View.INVISIBLE);
-                }else {
-                    img.setVisibility(View.VISIBLE);
-                }
+
 
 
                 return super.onOptionsItemSelected(item);
 
+
+            case R.id.action_settings3:
+
+                Intent intent3 = new Intent(getApplicationContext(), MyList.class);
+                startActivity(intent3);
+
+
+
+
+                return super.onOptionsItemSelected(item);
 
             default:
                 // If we got here, the user's action was not recognized.

@@ -28,13 +28,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/map" />
 
-    <ImageView
-        android:id="@+id/img"
-        android:layout_width="412dp"
-        android:layout_height="818dp"
-        android:src="@drawable/guide"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
