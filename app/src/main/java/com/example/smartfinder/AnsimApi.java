@@ -7,7 +7,8 @@ import retrofit2.http.Query;
 
 public interface AnsimApi {
 
-    @Headers("Accept: application/json")
-    @GET("/corona19-masks/v1/storesByGeo/json")
-    Call<Result> getStoresByGeo(@Query("lat") double lat, @Query("lng") double lng, @Query("m") int m);
+    @Headers(
+            "Authorization: KakaoAK {REST_API_KEY}")
+    @GET("/v2/local/geo/coord2address.json")
+    Call<cityResult> getStoresByGeo(@Query("lat") double lat, @Query("lng") double lng, @Query("m") int m);
 }
