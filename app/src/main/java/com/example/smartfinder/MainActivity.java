@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationSource locationSource;
     private NaverMap naverMap;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(@NonNull final NaverMap naverMap) {
 
-        String cityname;
+
         locationSource = new FusedLocationSource(this, ACCESS_LOCATION_PERMISSION_REQUEST_CODE);
         naverMap.setLocationSource(locationSource);
         UiSettings uiSettings = naverMap.getUiSettings();
@@ -119,11 +118,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View view) {
                 LatLng mapCenter = naverMap.getCameraPosition().target;
-               cityname= Reversegeo(mapCenter.latitude, mapCenter.longitude);
+            Reversegeo(mapCenter.latitude, mapCenter.longitude);
 
-
-                Log.d(String.valueOf(mapCenter.longitude), "longitude");
-                Log.d(String.valueOf(mapCenter.latitude), "latitude");
 
 
             }
@@ -131,6 +127,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -144,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+
     private void Reversegeo(double lat, double lng) {
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://dapi.kakao.com").addConverterFactory(GsonConverterFactory.create()).build();
@@ -155,13 +155,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onResponse(Call<KakaoResult> call, Response<KakaoResult> response) {
                 if (response.code() == 200) {
                     KakaoResult result = response.body();
-                    Log.d(String.valueOf((result.meta.getCount())), "longitude");
+
 
                     if(result.getDocuments().size()!=0){
-                        Log.d(String.valueOf((result.getDocuments().get(0).getAddress().getName1())), "Si");
                         Log.d((result.getDocuments().get(0).getAddress().getName()), "longitude");
-                        String city = result.getDocuments().get(0).getAddress().getName();
-                        fetchStoreSale(city);
+                       String City = result.getDocuments().get(0).getAddress().getName();
+                    fetchStoreSale(City);
                     }
 
                 }
@@ -176,14 +175,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     private void fetchStoreSale(String RELAX_SIDO_NM){
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://211.237.50.150:7080").addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://211.237.50.150:7080/openapi/5010c6384bc1bf89ca9024762721a81118a3d59e00cce037a1b09b5732169e05/json/Grid_20200713000000000605_1/1/1000/").addConverterFactory(GsonConverterFactory.create()).build();
         AnsimApi ansimApi = retrofit.create(AnsimApi.class);
+        Log.d(String.valueOf((RELAX_SIDO_NM)), "city");
         ansimApi.getStoresByGeo(RELAX_SIDO_NM).enqueue(new Callback<StoreSaleResult>() {
             @Override
             public void onResponse(Call<StoreSaleResult> call, Response<StoreSaleResult> response) {
+                Log.d(String.valueOf(response.body()), "error2");
                 if (response.code() == 200) {
                     StoreSaleResult result2 = response.body();
-                    updateMapMarkers(result2);
+                    if(result2.Grid_20200713000000000605_1.getRow().size()!=0) {
+                        Log.d(String.valueOf((result2.Grid_20200713000000000605_1.Anisim_total())), "total");
+                        Log.d(String.valueOf((result2.Grid_20200713000000000605_1.getRow().get(0).getRname())), "total");
+                    }
                 }
             }
 
@@ -193,10 +197,5 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
+
 }
-    private void updateMapMarkers(String RELAX_SIDO_NM) {
-        if (result2.Grid_20200713000000000605_1.totalCnt != 0) {
-            Log.d(String.valueOf((result.getDocuments().get(0).getAddress().getName1())), "Si");
-            Log.d(String.valueOf((result2.Grid_20200713000000000605_1.totalCnt)), "longitude");
-        }
-    }
