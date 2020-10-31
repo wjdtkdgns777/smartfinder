@@ -2,23 +2,18 @@ package com.example.smartfinder;
 
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
-import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.naver.maps.geometry.LatLng;
@@ -26,19 +21,7 @@ import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.UiSettings;
-import com.naver.maps.map.overlay.InfoWindow;
-import com.naver.maps.map.overlay.Marker;
-import com.naver.maps.map.overlay.Overlay;
-import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -47,7 +30,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private static final int ACCESS_LOCATION_PERMISSION_REQUEST_CODE = 100;
     private FusedLocationSource locationSource;
     private NaverMap naverMap;
@@ -61,13 +44,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
 
 
-
-
-
-        MapFragment mapFragment = (MapFragment)getSupportFragmentManager().findFragmentById(R.id.map);
+        MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-
 
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -77,9 +55,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24);
 
 
-
     }
-
 
 
     @Override
@@ -96,7 +72,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.action_settings1:
 
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/wjdtkdgns777/smartfinder")); startActivity(intent);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/wjdtkdgns777/smartfinder"));
+                startActivity(intent);
 
                 return super.onOptionsItemSelected(item);
 
@@ -106,8 +83,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(intent2);
 
 
-
-
                 return super.onOptionsItemSelected(item);
 
 
@@ -115,8 +90,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 Intent intent3 = new Intent(getApplicationContext(), MyList.class);
                 startActivity(intent3);
-
-
 
 
                 return super.onOptionsItemSelected(item);
@@ -131,38 +104,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-
     @Override
     public void onMapReady(@NonNull final NaverMap naverMap) {
 
-
+        String cityname;
         locationSource = new FusedLocationSource(this, ACCESS_LOCATION_PERMISSION_REQUEST_CODE);
         naverMap.setLocationSource(locationSource);
         UiSettings uiSettings = naverMap.getUiSettings();
         uiSettings.setLocationButtonEnabled(true);
 
-        Button Searchbutton = (Button) findViewById(R.id.Sbutton) ;
+        Button Searchbutton = (Button) findViewById(R.id.Sbutton);
 
         Searchbutton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
                 LatLng mapCenter = naverMap.getCameraPosition().target;
-                fetchStoreSale(mapCenter.latitude, mapCenter.longitude);
+               cityname= Reversegeo(mapCenter.latitude, mapCenter.longitude);
 
 
-                Log.d(String.valueOf(mapCenter.longitude),"longitude");
-                Log.d(String.valueOf(mapCenter.latitude),"latitude");
-
-
-
+                Log.d(String.valueOf(mapCenter.longitude), "longitude");
+                Log.d(String.valueOf(mapCenter.latitude), "latitude");
 
 
             }
         });
-
-
-
-
 
 
     }
@@ -179,49 +144,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+    private void Reversegeo(double lat, double lng) {
 
-
-    private void fetchStoreSale(double lat, double lng) {
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://dapi.kakao.com").addConverterFactory(GsonConverterFactory.create()).build();
         KakaoApi kakaoApi = retrofit.create(KakaoApi.class);
 
 
-
-
-        Call<RetrofitRepo> call = retrofitService.getIndex("mos");
-        call.enqueue(new Callback<RetrofitRepo>() {
+        kakaoApi.getcitybygeo(lat, lng).enqueue(new Callback<KakaoResult>() {
             @Override
-            public void onResponse(Call<RetrofitRepo> call, Response<RetrofitRepo> response) {
-                RetrofitRepo repo = response.body();
-                textViewIndex.setText(repo.getName());
-            }
-
-            @Override
-            public void onFailure(Call<RetrofitRepo> call, Throwable t) {
-
-            }
-        });
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        kakaoApi.getcitybygeo(lat,lng).enqueue(new Callback<KakaoResult>() {
-            @Override
-            public Object onResponse(Call<KakaoResult> call, Response<KakaoResult> response) {
+            public void onResponse(Call<KakaoResult> call, Response<KakaoResult> response) {
                 if (response.code() == 200) {
                     KakaoResult result = response.body();
-                    return result;
+                    Log.d(String.valueOf((result.meta.getCount())), "longitude");
+
+                    if(result.getDocuments().size()!=0){
+                        Log.d(String.valueOf((result.getDocuments().get(0).getAddress().getName1())), "Si");
+                        Log.d((result.getDocuments().get(0).getAddress().getName()), "longitude");
+                        String city = result.getDocuments().get(0).getAddress().getName();
+                        fetchStoreSale(city);
+                    }
+
                 }
             }
 
@@ -231,4 +173,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
+
+
+    private void fetchStoreSale(String RELAX_SIDO_NM){
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://211.237.50.150:7080").addConverterFactory(GsonConverterFactory.create()).build();
+        AnsimApi ansimApi = retrofit.create(AnsimApi.class);
+        ansimApi.getStoresByGeo(RELAX_SIDO_NM).enqueue(new Callback<StoreSaleResult>() {
+            @Override
+            public void onResponse(Call<StoreSaleResult> call, Response<StoreSaleResult> response) {
+                if (response.code() == 200) {
+                    StoreSaleResult result2 = response.body();
+                    updateMapMarkers(result2);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StoreSaleResult> call, Throwable t) {
+
+            }
+        });
+    }
 }
+    private void updateMapMarkers(String RELAX_SIDO_NM) {
+        if (result2.Grid_20200713000000000605_1.totalCnt != 0) {
+            Log.d(String.valueOf((result.getDocuments().get(0).getAddress().getName1())), "Si");
+            Log.d(String.valueOf((result2.Grid_20200713000000000605_1.totalCnt)), "longitude");
+        }
+    }

@@ -7,8 +7,7 @@ import retrofit2.http.Query;
 
 public interface AnsimApi {
 
-    @Headers(
-            "Authorization: KakaoAK {REST_API_KEY}")
-    @GET("/v2/local/geo/coord2address.json")
-    Call<cityResult> getStoresByGeo(@Query("lat") double lat, @Query("lng") double lng, @Query("m") int m);
+
+    @GET("/openapi/5010c6384bc1bf89ca9024762721a81118a3d59e00cce037a1b09b5732169e05/xml/Grid_20200713000000000605_1/1/1000")
+    Call<KakaoResult> getStoresByGeo(@Query("RELAX_SIDO_NM") String RELAX_SIDO_NM);
 }
