@@ -186,7 +186,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     StoreSaleResult result2 = response.body();
                     if(result2.Grid_20200713000000000605_1.getRow().size()!=0) {
                         Log.d(String.valueOf((result2.Grid_20200713000000000605_1.Anisim_total())), "total");
-                        Log.d(String.valueOf((result2.Grid_20200713000000000605_1.getRow().get(0).getRname())), "total");
+                        Log.d(String.valueOf((result2.Grid_20200713000000000605_1.getRow().get(0).getRname())), "firstname");
+                        updateMapMarkers(result2);
                     }
                 }
             }
@@ -196,6 +197,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         });
+    }
+
+
+    private void updateMapMarkers(StoreSaleResult result) {
+
+        if (result.Grid_20200713000000000605_1.getRow()!= null && result.Grid_20200713000000000605_1.totalCnt > 0) {
+            for (StoreSaleResult.Grid_20200713000000000605_1.row name : result.Grid_20200713000000000605_1.row) {
+
+                Log.d(String.valueOf(name.rname), "name");
+            }
+        }
     }
 
 }
