@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
         KakaoApi2 kakaoApi2 = retrofit.create(KakaoApi2.class);
 
 
-        kakaoApi2.getname(RELAX_SIDO_NM + name, y, x, 10000).enqueue(new Callback<KakaoResult2>() {
+        kakaoApi2.getname(RELAX_SIDO_NM +" "+ name, y, x, 10000).enqueue(new Callback<KakaoResult2>() {
             @Override
             public void onResponse(Call<KakaoResult2> call, Response<KakaoResult2> response) {
                 if (response.code() == 200) {
@@ -297,8 +297,6 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
 
                     if (result4.getDocuments2().size() != 0) {
-                        Log.d(String.valueOf(1), "fine");
-
 
                         SetMapMarker(result4,naverMap);
 
@@ -319,14 +317,18 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
     private void SetMapMarker(KakaoResult2 result,NaverMap naverMap) {
 
         int foo = Integer.parseInt(result.getDocuments2().get(0).distance);
-        Log.d(String.valueOf(foo), "reach");
-        Log.d(String.valueOf(result.meta.same_name.keyword), "keyword");
 
-        if (foo < 3000) {
+
+
+        if (foo < 2000) {
+            Log.d(String.valueOf(result.meta.same_name.keyword), "keyword");
+            Log.d(String.valueOf(result.getDocuments2().get(0).place_name), "name");
+            Log.d(String.valueOf(result.getDocuments2().get(0).place_url), "url");
+            Log.d(String.valueOf(foo), "reach");
+
             double lng = Double.parseDouble(result.getDocuments2().get(0).x);
             double lat = Double.parseDouble(result.getDocuments2().get(0).y);
-            Log.d(String.valueOf(lat), "lat");
-            Log.d(String.valueOf(lng), "lng");
+
 
             Marker marker = new Marker();
             marker.setTag(result);
@@ -354,13 +356,13 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
     public boolean onClick(@NonNull Overlay overlay) {
         if (overlay instanceof Marker) {
             Marker marker = (Marker) overlay;
-            Log.d(String.valueOf(10), "fine");
+
             if (marker.getInfoWindow() != null) {
                 infoWindow.close();
             } else {
                 if(infoWindow!=null) {
                     infoWindow.open(marker);
-                    Log.d(String.valueOf(100), "fine");
+
                 }
             }
             return true;
