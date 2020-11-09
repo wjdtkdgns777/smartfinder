@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,12 +41,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.naver.maps.map.overlay.Overlay.*;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+public class MainActivity extends AppCompatActivity implements NaverMap.OnMapClickListener, OnClickListener, OnMapReadyCallback{
     private static final int ACCESS_LOCATION_PERMISSION_REQUEST_CODE = 100;
     private FusedLocationSource locationSource;
     private NaverMap naverMap;
+    private InfoWindow infoWindow;
     private List<Marker> markerList = new ArrayList<Marker>();
+    public String URL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +69,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24);
+
+        Button btn;
+
+        btn = (Button)findViewById(R.id.button);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // 웹페이지 열기
+                Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URL));
+                startActivity(mIntent);
+            }
+        });
+
 
 
     }
@@ -122,14 +144,45 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         UiSettings uiSettings = naverMap.getUiSettings();
         uiSettings.setLocationButtonEnabled(true);
 
+
+
+
+        infoWindow = new InfoWindow();
+        infoWindow.setAdapter(new InfoWindow.DefaultViewAdapter(this) {
+            @NonNull
+            @Override
+            protected View getContentView(@NonNull InfoWindow infoWindow) {
+                Marker marker = infoWindow.getMarker();
+                KakaoResult2 result = (KakaoResult2) marker.getTag();
+                View view = View.inflate(MainActivity.this, R.layout.view_info_window, null);
+                ((TextView) view.findViewById(R.id.name)).setText(result.getDocuments2().get(0).getname());
+
+
+                ((TextView) view.findViewById(R.id.stock)).setText(result.getDocuments2().get(0).category_name);
+
+                ((TextView) view.findViewById(R.id.realname)).setText(result.getDocuments2().get(0).place_url);
+                URL = result.getDocuments2().get(0).place_url;
+                ((TextView) view.findViewById(R.id.time)).setText(result.getDocuments2().get(0).phone);
+                return view;
+            }
+
+
+
+        });
+
+
+
+
+
         Button Searchbutton = (Button) findViewById(R.id.Sbutton);
 
 
         Searchbutton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
+                resetMarkerList();
                 LatLng mapCenter = naverMap.getCameraPosition().target;
-                Reversegeo(mapCenter.latitude, mapCenter.longitude,naverMap);
+                Reversegeo(mapCenter.latitude, mapCenter.longitude, naverMap);
 
 
             }
@@ -138,7 +191,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
+
+
+
     }
+
+
 
 
     @Override
@@ -225,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     private void fetchStoreSale2(String RELAX_SIDO_NM, final String name, final double y, final double x, final NaverMap naverMap) {
-        resetMarkerList();
+
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://dapi.kakao.com").addConverterFactory(GsonConverterFactory.create()).build();
         KakaoApi2 kakaoApi2 = retrofit.create(KakaoApi2.class);
@@ -242,60 +300,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Log.d(String.valueOf(1), "fine");
 
 
-
-                        InfoWindow infoWindow = new InfoWindow();
-                        infoWindow.setAdapter(new InfoWindow.DefaultViewAdapter(this) {
-                            @NonNull
-                            @Override
-                            protected View getContentView(@NonNull InfoWindow infoWindow) {
-                                Marker marker = infoWindow.getMarker();
-                                Store store = (Store) marker.getTag();
-                                View view = View.inflate(MainActivity.this, R.layout.view_info_window, null);
-                                ((TextView) view.findViewById(R.id.name)).setText(store.name);
-                                if ("plenty".equalsIgnoreCase(store.remain_stat)) {
-                                    ((TextView) view.findViewById(R.id.stock)).setText("100개 이상");
-                                } else if ("some".equalsIgnoreCase(store.remain_stat)) {
-                                    ((TextView) view.findViewById(R.id.stock)).setText("30개 이상 100개 미만");
-                                } else if ("few".equalsIgnoreCase(store.remain_stat)) {
-                                    ((TextView) view.findViewById(R.id.stock)).setText("2개 이상 30개 미만");
-                                } else if ("empty".equalsIgnoreCase(store.remain_stat)) {
-                                    ((TextView) view.findViewById(R.id.stock)).setText("1개 이하");
-                                } else if ("break".equalsIgnoreCase(store.remain_stat)) {
-                                    ((TextView) view.findViewById(R.id.stock)).setText("판매중지");
-                                } else {
-                                    ((TextView) view.findViewById(R.id.stock)).setText(null);
-                                }
-                                ((TextView) view.findViewById(R.id.time)).setText("입고 " + store.stock_at);
-                                return view;
-                        });
-
-                        }
-
-
-
-                        int foo = Integer.parseInt(result4.getDocuments2().get(0).distance);
-                        Log.d(String.valueOf(foo), "reach");
-                        Log.d(String.valueOf(result4.meta.same_name.keyword), "keyword");
-
-                        if (foo < 1000) {
-                            double lng = Double.parseDouble(result4.getDocuments2().get(0).x);
-                            double lat = Double.parseDouble(result4.getDocuments2().get(0).y);
-                            Log.d(String.valueOf(lat), "lat");
-                            Log.d(String.valueOf(lng), "lng");
-
-                            Marker marker = new Marker();
-                            marker.setIcon(OverlayImage.fromResource(R.drawable.ic_baseline_local_dining_24));
-                            marker.setPosition(new LatLng(lat, lng));
-
-
-                            marker.setAnchor(new PointF(0.5f, 1.0f));
-                            marker.setMap(naverMap);
-                            marker.setOnClickListener(overlay -> {
-                                infoWindow.open(marker);
-                                return true;
-                            });
-                            markerList.add(marker);
-                        }
+                        SetMapMarker(result4,naverMap);
 
                     }
 
@@ -311,6 +316,57 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    private void SetMapMarker(KakaoResult2 result,NaverMap naverMap) {
+
+        int foo = Integer.parseInt(result.getDocuments2().get(0).distance);
+        Log.d(String.valueOf(foo), "reach");
+        Log.d(String.valueOf(result.meta.same_name.keyword), "keyword");
+
+        if (foo < 3000) {
+            double lng = Double.parseDouble(result.getDocuments2().get(0).x);
+            double lat = Double.parseDouble(result.getDocuments2().get(0).y);
+            Log.d(String.valueOf(lat), "lat");
+            Log.d(String.valueOf(lng), "lng");
+
+            Marker marker = new Marker();
+            marker.setTag(result);
+            marker.setIcon(OverlayImage.fromResource(R.drawable.ic_baseline_local_dining_24));
+            marker.setPosition(new LatLng(lat, lng));
+
+
+            marker.setAnchor(new PointF(0.5f, 1.0f));
+            marker.setMap(naverMap);
+
+            marker.setOnClickListener(this);
+            markerList.add(marker);
+
+        }
+
+    }
+    @Override
+        public void onMapClick(@NonNull PointF pointF, @NonNull LatLng latLng) {
+        if (infoWindow.getMarker() != null) {
+        infoWindow.close();
+        }
+        }
+
+    @Override
+    public boolean onClick(@NonNull Overlay overlay) {
+        if (overlay instanceof Marker) {
+            Marker marker = (Marker) overlay;
+            Log.d(String.valueOf(10), "fine");
+            if (marker.getInfoWindow() != null) {
+                infoWindow.close();
+            } else {
+                if(infoWindow!=null) {
+                    infoWindow.open(marker);
+                    Log.d(String.valueOf(100), "fine");
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
 
 
@@ -323,6 +379,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
     }
+
+
 }
 
 

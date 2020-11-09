@@ -23,6 +23,8 @@ public class KakaoResult2 {
     public class documents {
 
 
+        @SerializedName("category_name") public String category_name;
+        @SerializedName("phone") public String phone;
         @SerializedName("place_name") public String place_name;
         @SerializedName("x") public String x;
         @SerializedName("y") public String y;
@@ -30,6 +32,7 @@ public class KakaoResult2 {
         @SerializedName("distance") public String distance;
 
         public String geturl() {return place_url;}
+        public String getname() {return place_name;}
 
     }
 
