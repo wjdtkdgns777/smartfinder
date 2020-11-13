@@ -21,6 +21,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
@@ -33,7 +39,10 @@ import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.util.FusedLocationSource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,6 +60,10 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
     private InfoWindow infoWindow;
     private List<Marker> markerList = new ArrayList<Marker>();
     public String URL;
+    public String Phone;
+    public String Name;
+    public String Category;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +96,46 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
                 startActivity(mIntent);
             }
         });
+
+
+        Button btn2;
+
+        btn2 = (Button)findViewById(R.id.button2);
+
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // 웹페이지 열기
+
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                // Create a new user with a first and last name
+                Map<String, Object> user = new HashMap<>();
+                user.put("URL", URL);
+                user.put("Phone", Phone);
+                user.put("Category", Category);
+                user.put("Name", Name);
+// Add a new document with a generated ID
+                db.collection("users")
+                        .add(user)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d("1", "DocumentSnapshot added with ID: " + documentReference.getId());
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("2", "Error adding document", e);
+                            }
+                        });
+
+            }
+        });// Write a message to the database
+
 
 
 
@@ -156,13 +209,14 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
                 KakaoResult2 result = (KakaoResult2) marker.getTag();
                 View view = View.inflate(MainActivity.this, R.layout.view_info_window, null);
                 ((TextView) view.findViewById(R.id.name)).setText(result.getDocuments2().get(0).getname());
-
+                Name = result.getDocuments2().get(0).getname();
 
                 ((TextView) view.findViewById(R.id.stock)).setText(result.getDocuments2().get(0).category_name);
-
+                Category = result.getDocuments2().get(0).category_name;
                 ((TextView) view.findViewById(R.id.realname)).setText(result.getDocuments2().get(0).place_url);
                 URL = result.getDocuments2().get(0).place_url;
                 ((TextView) view.findViewById(R.id.time)).setText(result.getDocuments2().get(0).phone);
+                Phone = result.getDocuments2().get(0).phone;
                 return view;
             }
 
