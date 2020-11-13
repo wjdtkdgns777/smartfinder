@@ -80,8 +80,8 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24);
 
         Button btn;
 
@@ -90,10 +90,11 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // 웹페이지 열기
-                Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URL));
-                startActivity(mIntent);
+                if(URL!=null) {
+                    // 웹페이지 열기
+                    Intent mIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(URL));
+                    startActivity(mIntent);
+                }
             }
         });
 
@@ -107,32 +108,33 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
             public void onClick(View v) {
 
                 // 웹페이지 열기
+                if (URL != null) {
 
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                // Create a new user with a first and last name
-                Map<String, Object> user = new HashMap<>();
-                user.put("URL", URL);
-                user.put("Phone", Phone);
-                user.put("Category", Category);
-                user.put("Name", Name);
+                    // Create a new user with a first and last name
+                    Map<String, Object> user = new HashMap<>();
+                    user.put("URL", URL);
+                    user.put("Phone", Phone);
+                    user.put("Category", Category);
+                    user.put("Name", Name);
 // Add a new document with a generated ID
-                db.collection("users")
-                        .add(user)
-                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Log.d("1", "DocumentSnapshot added with ID: " + documentReference.getId());
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("2", "Error adding document", e);
-                            }
-                        });
+                    db.collection("users")
+                            .add(user)
+                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                @Override
+                                public void onSuccess(DocumentReference documentReference) {
+                                    Log.d("1", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w("2", "Error adding document", e);
+                                }
+                            });
 
+                }
             }
         });// Write a message to the database
 
@@ -181,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
-                Toast.makeText(getApplicationContext(), "나머지 버튼 클릭됨", Toast.LENGTH_LONG).show();
+
                 return super.onOptionsItemSelected(item);
 
         }
@@ -283,6 +285,13 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
                     if (result.getDocuments().size() != 0) {
                         Log.d((result.getDocuments().get(0).getAddress().getName()), "longitude");
                         String City = result.getDocuments().get(0).getAddress().getName();
+                        int idx = City.indexOf(" ");
+                        Log.d(String.valueOf((idx)), "idx");
+                        if(idx!=-1) {
+                            City = City.substring(0, idx);
+                        }
+
+
                         fetchStoreSale(City, lat, lng,naverMap);
                     }
 

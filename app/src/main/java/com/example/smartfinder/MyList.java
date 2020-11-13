@@ -78,9 +78,6 @@ public class MyList extends AppCompatActivity{
 
 
 
-
-
-
     Dictionary data = new Dictionary(name, phone, category, url);
 
     //mArrayList.add(0, dict); //RecyclerView의 첫 줄에 삽입
