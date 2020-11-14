@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
     public String Phone;
     public String Name;
     public String Category;
-
+public int a;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -283,10 +283,14 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
 
                     if (result.getDocuments().size() != 0) {
-                        Log.d((result.getDocuments().get(0).getAddress().getName()), "longitude");
+
+
+
+
+
                         String City = result.getDocuments().get(0).getAddress().getName();
                         int idx = City.indexOf(" ");
-                        Log.d(String.valueOf((idx)), "idx");
+
                         if(idx!=-1) {
                             City = City.substring(0, idx);
                         }
@@ -340,29 +344,34 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
                 fetchStoreSale2(RELAX_SIDO_NM, name.rname, lat, lng,naverMap);
 
+
             }
         }
     }
 
 
-    private void fetchStoreSale2(String RELAX_SIDO_NM, final String name, final double y, final double x, final NaverMap naverMap) {
+    private void fetchStoreSale2(String RELAX_SIDO_NM, final String name7, final double y, final double x, final NaverMap naverMap) {
 
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://dapi.kakao.com").addConverterFactory(GsonConverterFactory.create()).build();
         KakaoApi2 kakaoApi2 = retrofit.create(KakaoApi2.class);
 
 
-        kakaoApi2.getname(RELAX_SIDO_NM +" "+ name, y, x, 10000).enqueue(new Callback<KakaoResult2>() {
+        kakaoApi2.getname(RELAX_SIDO_NM +" "+ name7, y, x, 10000).enqueue(new Callback<KakaoResult2>() {
             @Override
             public void onResponse(Call<KakaoResult2> call, Response<KakaoResult2> response) {
                 if (response.code() == 200) {
                     KakaoResult2 result4 = response.body();
 
+                    //여기에서
 
                     if (result4.getDocuments2().size() != 0) {
-
+//여기
                         SetMapMarker(result4,naverMap);
 
+                    }
+                    if (result4.getDocuments2().size() == 0) {
+                        Log.d(String.valueOf(name7), "errornamecheck");
                     }
 
 
