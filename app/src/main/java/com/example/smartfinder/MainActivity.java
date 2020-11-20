@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.PointF;
 import android.net.Uri;
@@ -215,7 +216,7 @@ public int a;
 
                 ((TextView) view.findViewById(R.id.stock)).setText(result.getDocuments2().get(0).category_name);
                 Category = result.getDocuments2().get(0).category_name;
-                ((TextView) view.findViewById(R.id.realname)).setText(result.getDocuments2().get(0).place_url);
+
                 URL = result.getDocuments2().get(0).place_url;
                 ((TextView) view.findViewById(R.id.time)).setText(result.getDocuments2().get(0).phone);
                 Phone = result.getDocuments2().get(0).phone;
@@ -237,6 +238,7 @@ public int a;
             @Override
             public void onClick(View view) {
                 resetMarkerList();
+
                 LatLng mapCenter = naverMap.getCameraPosition().target;
                 Reversegeo(mapCenter.latitude, mapCenter.longitude, naverMap);
 
@@ -323,8 +325,14 @@ public int a;
                     if (result2.Grid_20200713000000000605_1.getRow().size() != 0) {
                         Log.d(String.valueOf((result2.Grid_20200713000000000605_1.Anisim_total())), "total");
                         Log.d(String.valueOf((result2.Grid_20200713000000000605_1.getRow().get(0).getRname())), "firstname");
-
+                        Toast.makeText(MainActivity.this, RELAX_SIDO_NM+"에서"+result2.Grid_20200713000000000605_1.Anisim_total()+"개의 결과가 검색되었습니다", Toast.LENGTH_LONG).show();
                         updateMapMarkers(RELAX_SIDO_NM, result2, lat, lng,naverMap);
+                    }
+
+                    if (result2.Grid_20200713000000000605_1.getRow().size() == 0) {
+
+                        Toast.makeText(MainActivity.this, "주변에 안심식당이 없습니다", Toast.LENGTH_LONG).show();
+
                     }
                 }
             }

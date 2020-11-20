@@ -11,10 +11,10 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView1"
@@ -22,9 +22,9 @@
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
             android:text="TITLE"
-            android:textSize="15sp"
             android:textColor="@android:color/black"
-            android:textStyle="bold"/>
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView2"
@@ -32,8 +32,8 @@
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
             android:text="content"
-            android:textSize="13sp"
-            android:textColor="@android:color/darker_gray"/>
+            android:textColor="@android:color/darker_gray"
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/textView3"
@@ -41,18 +41,17 @@
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
             android:text="content"
-            android:textSize="13sp"
-            android:textColor="@android:color/darker_gray"/>
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:text="바로가기"
-            android:textSize="15sp"
-            android:textColor="@android:color/holo_blue_dark"/>
+            android:textColor="@android:color/darker_gray"
+            android:textSize="13sp" />
+
+
 
 
     </LinearLayout>
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="바로가기" />
 
 </LinearLayout>

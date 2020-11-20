@@ -27,7 +27,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
         protected TextView name;
         protected TextView phone;
         protected TextView category;
-        protected TextView url;
+        protected Button url;
 
 
 
@@ -38,7 +38,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
             this.name = (TextView) view.findViewById(R.id.textView1);
             this.phone = (TextView) view.findViewById(R.id.textView2);
             this.category = (TextView) view.findViewById(R.id.textView3);
-            this.url = (TextView) view.findViewById(R.id.textView4);
+            this.url = (Button) view.findViewById(R.id.button4);
 
 
         }
@@ -68,20 +68,24 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder viewholder, int position) {
 
-        viewholder.name.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
-        viewholder.phone.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
-        viewholder.category.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
-        viewholder.url.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
+        viewholder.name.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17);
+        viewholder.phone.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        viewholder.category.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
+
 
         viewholder.name.setGravity(Gravity.CENTER);
         viewholder.phone.setGravity(Gravity.CENTER);
         viewholder.category.setGravity(Gravity.CENTER);
-        viewholder.url.setGravity(Gravity.CENTER);
+
 
 
         viewholder.name.setText(mList.get(position).getName2());
         viewholder.phone.setText(mList.get(position).getPhone2());
         viewholder.category.setText(mList.get(position).getCategory2());
+
+
+
+
 
 
 
