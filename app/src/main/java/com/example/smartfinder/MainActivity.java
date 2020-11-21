@@ -416,7 +416,8 @@ public int a;
 
             Marker marker = new Marker();
             marker.setTag(result);
-            marker.setIcon(OverlayImage.fromResource(R.drawable.ic_baseline_local_dining_24));
+            marker.setIcon(OverlayImage.fromResource(R.drawable.ic_baseline_restaurant_24));
+
             marker.setPosition(new LatLng(Double.parseDouble(result.getDocuments2().get(0).y), Double.parseDouble(result.getDocuments2().get(0).x)));
 
 
