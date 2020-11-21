@@ -64,6 +64,11 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
     public String Phone;
     public String Name;
     public String Category;
+    String City;
+    Double lat;
+    Double lng;
+    ProgressDialog pd;
+
 public int a;
 
     @Override
@@ -84,10 +89,8 @@ public int a;
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24);
 
-        Button btn;
 
-        btn = (Button)findViewById(R.id.button);
-
+        Button btn = (Button)findViewById(R.id.button);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,15 +103,13 @@ public int a;
         });
 
 
-        Button btn2;
-
-        btn2 = (Button)findViewById(R.id.button2);
-
+        Button btn2 = (Button)findViewById(R.id.button2);
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                // 웹페이지 열기
+
+
                 if (URL != null) {
 
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -143,6 +144,7 @@ public int a;
 
 
     }
+
 
 
     @Override
@@ -194,7 +196,8 @@ public int a;
     @Override
     public void onMapReady(@NonNull final NaverMap naverMap) {
 
-
+        this.naverMap=naverMap;
+        naverMap.setOnMapClickListener(this);
         locationSource = new FusedLocationSource(this, ACCESS_LOCATION_PERMISSION_REQUEST_CODE);
         naverMap.setLocationSource(locationSource);
         UiSettings uiSettings = naverMap.getUiSettings();
@@ -233,14 +236,28 @@ public int a;
 
         Button Searchbutton = (Button) findViewById(R.id.Sbutton);
 
-
         Searchbutton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
                 resetMarkerList();
+                pd = new ProgressDialog(MainActivity.this);
+                pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                pd.setMessage("주변 안심식당을 검색하는 중입니다");
+                pd.setIndeterminate(true);
+                pd.setCancelable(false);
+                pd.show();
+                Thread mThread = new Thread() {
+                    @Override
+                    public void run() {
 
-                LatLng mapCenter = naverMap.getCameraPosition().target;
-                Reversegeo(mapCenter.latitude, mapCenter.longitude, naverMap);
+                        LatLng mapCenter = naverMap.getCameraPosition().target;
+                        lat=mapCenter.latitude;
+                        lng=mapCenter.longitude;
+                        Reversegeo();
+
+                    }
+                };
+                mThread.start();
 
 
             }
@@ -269,8 +286,7 @@ public int a;
     }
 
 
-    private void Reversegeo(final double lat, final double lng, final NaverMap naverMap) {
-
+    private void Reversegeo() {
 
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://dapi.kakao.com").addConverterFactory(GsonConverterFactory.create()).build();
@@ -283,14 +299,10 @@ public int a;
                 if (response.code() == 200) {
                     KakaoResult result = response.body();
 
-
                     if (result.getDocuments().size() != 0) {
 
 
-
-
-
-                        String City = result.getDocuments().get(0).getAddress().getName();
+                        City = result.getDocuments().get(0).getAddress().getName();
                         int idx = City.indexOf(" ");
 
                         if(idx!=-1) {
@@ -298,7 +310,7 @@ public int a;
                         }
 
 
-                        fetchStoreSale(City, lat, lng,naverMap);
+                        fetchStoreSale(City);
                     }
 
                 }
@@ -312,27 +324,34 @@ public int a;
     }
 
 
-    private void fetchStoreSale(final String RELAX_SIDO_NM, final double lat, final double lng, final NaverMap naverMap) {
+    private void fetchStoreSale(final String RELAX_SIDO_NM) {
         Retrofit retrofit = new Retrofit.Builder().baseUrl("http://211.237.50.150:7080/openapi/5010c6384bc1bf89ca9024762721a81118a3d59e00cce037a1b09b5732169e05/json/Grid_20200713000000000605_1/1/1000/").addConverterFactory(GsonConverterFactory.create()).build();
         AnsimApi ansimApi = retrofit.create(AnsimApi.class);
         Log.d(String.valueOf((RELAX_SIDO_NM)), "city");
         ansimApi.getStoresByGeo(RELAX_SIDO_NM).enqueue(new Callback<StoreSaleResult>() {
             @Override
             public void onResponse(Call<StoreSaleResult> call, Response<StoreSaleResult> response) {
-                Log.d(String.valueOf(response.body()), "error2");
+
                 if (response.code() == 200) {
                     StoreSaleResult result2 = response.body();
                     if (result2.Grid_20200713000000000605_1.getRow().size() != 0) {
                         Log.d(String.valueOf((result2.Grid_20200713000000000605_1.Anisim_total())), "total");
-                        Log.d(String.valueOf((result2.Grid_20200713000000000605_1.getRow().get(0).getRname())), "firstname");
-                        Toast.makeText(MainActivity.this, RELAX_SIDO_NM+"에서"+result2.Grid_20200713000000000605_1.Anisim_total()+"개의 결과가 검색되었습니다", Toast.LENGTH_LONG).show();
-                        updateMapMarkers(RELAX_SIDO_NM, result2, lat, lng,naverMap);
+
+                        Toast.makeText(MainActivity.this, City+"에서"+result2.Grid_20200713000000000605_1.Anisim_total()+"개의 결과가 검색되었습니다", Toast.LENGTH_LONG).show();
+                        if (result2.Grid_20200713000000000605_1.getRow() != null && result2.Grid_20200713000000000605_1.totalCnt > 0) {
+                            for (StoreSaleResult.Grid_20200713000000000605_1.row name : result2.Grid_20200713000000000605_1.row) {
+
+                                fetchStoreSale2(name.rname);
+
+
+                            }
+                        }
                     }
 
                     if (result2.Grid_20200713000000000605_1.getRow().size() == 0) {
 
                         Toast.makeText(MainActivity.this, "주변에 안심식당이 없습니다", Toast.LENGTH_LONG).show();
-
+                        pd.dismiss();
                     }
                 }
             }
@@ -345,27 +364,16 @@ public int a;
     }
 
 
-    private void updateMapMarkers(String RELAX_SIDO_NM, StoreSaleResult result, double lat, double lng,NaverMap naverMap) {
-
-        if (result.Grid_20200713000000000605_1.getRow() != null && result.Grid_20200713000000000605_1.totalCnt > 0) {
-            for (StoreSaleResult.Grid_20200713000000000605_1.row name : result.Grid_20200713000000000605_1.row) {
-
-                fetchStoreSale2(RELAX_SIDO_NM, name.rname, lat, lng,naverMap);
 
 
-            }
-        }
-    }
-
-
-    private void fetchStoreSale2(String RELAX_SIDO_NM, final String name7, final double y, final double x, final NaverMap naverMap) {
+    private void fetchStoreSale2(final String name7) {
 
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://dapi.kakao.com").addConverterFactory(GsonConverterFactory.create()).build();
         KakaoApi2 kakaoApi2 = retrofit.create(KakaoApi2.class);
 
 
-        kakaoApi2.getname(RELAX_SIDO_NM +" "+ name7, y, x, 10000).enqueue(new Callback<KakaoResult2>() {
+        kakaoApi2.getname(City +" "+ name7, lat, lng, 20000).enqueue(new Callback<KakaoResult2>() {
             @Override
             public void onResponse(Call<KakaoResult2> call, Response<KakaoResult2> response) {
                 if (response.code() == 200) {
@@ -375,11 +383,13 @@ public int a;
 
                     if (result4.getDocuments2().size() != 0) {
 //여기
-                        SetMapMarker(result4,naverMap);
+
+                            SetMapMarker(result4);
+
 
                     }
                     if (result4.getDocuments2().size() == 0) {
-                        Log.d(String.valueOf(name7), "errornamecheck");
+                        Log.d(String.valueOf(name7), "size 0");
                     }
 
 
@@ -394,26 +404,20 @@ public int a;
 
     }
 
-    private void SetMapMarker(KakaoResult2 result,NaverMap naverMap) {
+    private void SetMapMarker(KakaoResult2 result) {
 
+        pd.dismiss();
         int foo = Integer.parseInt(result.getDocuments2().get(0).distance);
 
-
-
-        if (foo < 2000) {
-            Log.d(String.valueOf(result.meta.same_name.keyword), "keyword");
-            Log.d(String.valueOf(result.getDocuments2().get(0).place_name), "name");
-            Log.d(String.valueOf(result.getDocuments2().get(0).place_url), "url");
-            Log.d(String.valueOf(foo), "reach");
-
-            double lng = Double.parseDouble(result.getDocuments2().get(0).x);
-            double lat = Double.parseDouble(result.getDocuments2().get(0).y);
+        if (foo < 1000) {
+            //Log.d(String.valueOf(result.meta.same_name.keyword), "keyword");
+            //Log.d(String.valueOf(result.getDocuments2().get(0).place_name), "name");
 
 
             Marker marker = new Marker();
             marker.setTag(result);
             marker.setIcon(OverlayImage.fromResource(R.drawable.ic_baseline_local_dining_24));
-            marker.setPosition(new LatLng(lat, lng));
+            marker.setPosition(new LatLng(Double.parseDouble(result.getDocuments2().get(0).y), Double.parseDouble(result.getDocuments2().get(0).x)));
 
 
             marker.setAnchor(new PointF(0.5f, 1.0f));
@@ -421,8 +425,8 @@ public int a;
 
             marker.setOnClickListener(this);
             markerList.add(marker);
-
         }
+
 
     }
     @Override
