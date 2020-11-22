@@ -14,7 +14,7 @@ public class splashpage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceStare) {
         super.onCreate(savedInstanceStare);
-        setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_splash);//구현하다 중지한 부분
 
 
 

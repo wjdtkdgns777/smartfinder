@@ -2,14 +2,14 @@ package com.example.smartfinder;
 
 public class Dictionary {
 
-    private String name;
+    private String name;//내 찜리스트 정보들
     private String phone;
     private String category;
     private String url;
 
     public String getName2() {
         return name;
-    }
+    }//정보 사용을 위해 작성
 
     public void setName2(String name) {
         this.name = name;
@@ -39,7 +39,7 @@ public class Dictionary {
         this.url = url;
     }
 
-    public Dictionary(String name, String phone, String category, String url) {
+    public Dictionary(String name, String phone, String category, String url) {//생성자
         this.name = name;
         this.phone = phone;
         this.category = category;

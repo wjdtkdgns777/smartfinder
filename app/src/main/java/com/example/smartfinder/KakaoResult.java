@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KakaoResult {
-
+    //카카오 리버스지오코딩 파싱하는 부분, 아래 규격에 맞게 결과가 오면 클래스 이용해 받고 필요한 정보만 사용하는것
+//https://developers.kakao.com/tool/rest-api/open/get/v2-local-geo-coord2address.%7Bformat%7D 여기서 결과값을 확인할수 있다
 
     @SerializedName("meta")
     Meta meta;

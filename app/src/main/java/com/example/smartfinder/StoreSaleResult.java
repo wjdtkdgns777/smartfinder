@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StoreSaleResult {
+    //안심식당 api 파싱하기 위한 클래스
+    //https://data.mafra.go.kr/opendata/data/indexOpenDataDetail.do?data_id=20200713000000001391&filter_ty=O&getBack=&sort_id=regist_dt&s_data_nm=&instt_id=201410120001&cl_code=&shareYn= 에서 추가 정보 확인가능
 
 
     @SerializedName("Grid_20200713000000000605_1")
