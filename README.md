@@ -30,7 +30,7 @@
 
 
 <메뉴><br>
-<img width="200" src="https://user-images.githubusercontent.com/60922290/99653797-d6169100-2a9c-11eb-9bea-d7817d028ccc.PNG" width="90%"></img>
+<img width="200" src="https://user-images.githubusercontent.com/60922290/99907411-00c44c00-2d20-11eb-93ce-c40443afabf9.PNG" width="90%"></img>
 
 
 
