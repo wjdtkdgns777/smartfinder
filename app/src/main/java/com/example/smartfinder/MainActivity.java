@@ -428,9 +428,10 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
 
                     }
-                    //if (result4.getDocuments2().size() == 0) {
-                        //Log.d(String.valueOf(name7), "size 0");에러 체크용 로그
-                   // }
+                    if (result4.getDocuments2().size() == 0) {
+                        pd.dismiss();
+                        Log.d(String.valueOf(name7), "size 0");//에러 체크용 로그
+                    }
 
 
                 }
