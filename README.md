@@ -23,12 +23,17 @@ https://youtu.be/ZesrE4npISs
 마커가 과다하게 찍히는것을 방지하게 위해, 내가 보고있는곳 주변 2000m의 음식점만 나오도록 해주었기에 주변에 안심식당이 보이지 않을수도 있다.
 혹시 제 프로젝트를 사용하실경우 api key들을 바꾸는것을 잊지 말아주세요!
 
-This application shows nearby "Ansim Restaurant", which is selected by South korea government for 
-1. offering extra dishes 2. keep spoons clean 3.workers wear masks.
+This application shows nearby "Ansim Restaurant", which is selected by South korea government for offering extra dishes, keep spoons clean, and restaurnat workers always wear masks.
+
 I made this to search nearby Ansim Restaurant more directly, unlike Public Dataset offered by government.
+
 I used Daum Reversegeo api, Daum keyword search api, Anisim api, navermap api, firebase api.
+
 This application shows restaurnt only whithin 2000m based on your camera position, so sometimes it may not show you
 nearby Ansim Restaurant, even though it pops up message that it found restaurant in your city.
+
 This application only works in south korea, as this is based on Korea's public data. Keep aware of that.
+
 But I believe this might help someone who is looking for way to learn about api, or map based application, so I'm leaving comment.
+
 Good luck with your development and remember to change api keys in api classes!
