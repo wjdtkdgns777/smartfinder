@@ -2,17 +2,21 @@ package com.example.smartfinder;
 
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,8 +28,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.naver.maps.geometry.LatLng;
@@ -42,7 +47,6 @@ import com.naver.maps.map.util.FusedLocationSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -68,8 +72,8 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
     Double lat;//카메라좌표 래티튜드
     Double lng;//카메라좌표 롱기튜드
     ProgressDialog pd;//로딩바
-
-
+    private DrawerLayout mDrawerLayout;
+    private AppBarConfiguration mAppBarConfiguration;
     /*
       검색 기능의 구현방법에 대하여
 
@@ -131,6 +135,44 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
         //getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24); 추가구현 고민중인 부분,현재는 의미 없음
 
 
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+
+
+        ActionBar actionBar = getSupportActionBar();
+
+        actionBar.setDisplayHomeAsUpEnabled(true); // 뒤로가기 버튼 만들기
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24); //뒤로가기 버튼 이미지 지정
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                                                             @Override
+                                                             public boolean onNavigationItemSelected(MenuItem menuItem) {
+                                                                 menuItem.setChecked(true);
+                                                                 mDrawerLayout.closeDrawers();
+
+                                                                 int id = menuItem.getItemId();
+                                                                 String title = menuItem.getTitle().toString();
+
+                                                                 if (id == R.id.nav_home) {
+                                                                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/wjdtkdgns777/smartfinder"));
+                                                                     startActivity(intent);//인텐트와 uri이용하여 깃허브 연결
+                                                                 } else if (id == R.id.nav_gallery) {
+                                                                     Intent intent2 = new Intent(getApplicationContext(), guideInfo.class);//가이드인포로 넘어감
+                                                                     startActivity(intent2);
+                                                                 } else if (id == R.id.nav_slideshow) {
+                                                                     Intent intent3 = new Intent(getApplicationContext(), MyList.class);//마이리스트로 넘어감
+                                                                     startActivity(intent3);
+                                                                 }
+
+                                                                 return true;
+                                                             }
+                                                         });
+
+
         Button btn = (Button)findViewById(R.id.button);//첫 화면의 "바로가기" 버튼 정의, 이후 URL값이 생기면 바로가기 버튼을 눌러 내가 보고있는 인포윈도우의 다음플레이스로 화면 전환할수있음
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,53 +222,21 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
         });// 여기까지가 파이어베이스에 찜리스트 저장 기능
 
 
+
     }
-
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //오른쪽 상단의 메뉴모양 정의된 R.메뉴.메뉴 사용하기 위해 작성된 부분
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-            //실제 메뉴의 기능 구현
-        switch (item.getItemId()) {
-            case R.id.action_settings1://메뉴의 첫번째 버튼 눌리면 내 깃허브와 연결됨
-
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/wjdtkdgns777/smartfinder"));
-                startActivity(intent);//인텐트와 uri이용하여 깃허브 연결
-
-                return super.onOptionsItemSelected(item);
-
-            case R.id.action_settings2://간단한 어플의 도움말 메뉴
-
-                Intent intent2 = new Intent(getApplicationContext(), guideInfo.class);//가이드인포로 넘어감
-                startActivity(intent2);
-
-
-                return super.onOptionsItemSelected(item);
-
-
-            case R.id.action_settings3://내 찜리스트 보여주는 메뉴
-
-                Intent intent3 = new Intent(getApplicationContext(), MyList.class);//마이리스트로 넘어감
-                startActivity(intent3);
-
-
-                return super.onOptionsItemSelected(item);
-
-            default://디폴트는 설정 안함
-
-
-                return super.onOptionsItemSelected(item);
-
+        switch (item.getItemId()){
+            case android.R.id.home:{ // 왼쪽 상단 버튼 눌렀을 때
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+            }
         }
+        return super.onOptionsItemSelected(item);
     }
+
+
+
 
 
     @Override
