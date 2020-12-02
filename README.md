@@ -15,7 +15,7 @@
 네이버맵 api,
 파이어베이스 api를 구현에 주로 사용하였다.
 
-https://youtu.be/ZesrE4npISs
+https://youtu.be/pRZjgaug47A
 
 를 통해 자세한 시연영상을 확인할수 있다.
 
