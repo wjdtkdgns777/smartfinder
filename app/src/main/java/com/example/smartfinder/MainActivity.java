@@ -381,12 +381,12 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
                         Toast.makeText(MainActivity.this, City+"에서"+result2.Grid_20200713000000000605_1.Anisim_total()+"개의 결과가 검색되었습니다", Toast.LENGTH_LONG).show();//얼마나 안심식당이 있나 토스트메시지
                         if (result2.Grid_20200713000000000605_1.getRow() != null && result2.Grid_20200713000000000605_1.totalCnt > 0) {//만약 한개 이상 있다면
-                            for (StoreSaleResult.Grid_20200713000000000605_1.row name : result2.Grid_20200713000000000605_1.row) {
-
-                               KakaoRestaurant(name.rname);//그 개수만큼 카카오 키워드검색 api를 사용해서 정보를 얻음
 
 
-                            }
+                               KakaoRestaurant(result2);//그 개수만큼 카카오 키워드검색 api를 사용해서 정보를 얻음
+
+
+
                         }
                     }
 
@@ -408,51 +408,51 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
 
 
-    private void KakaoRestaurant(final String name7) {//카카오 키워드 검색 api(https://developers.kakao.com/tool/rest-api/open/get/v2-local-search-keyword.%7Bformat%7D)
+    private void KakaoRestaurant(StoreSaleResult result) {//카카오 키워드 검색 api(https://developers.kakao.com/tool/rest-api/open/get/v2-local-search-keyword.%7Bformat%7D)
 
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://dapi.kakao.com").addConverterFactory(GsonConverterFactory.create()).build();
         KakaoApi2 kakaoApi2 = retrofit.create(KakaoApi2.class);//레트로핏 사용
 
+        for (StoreSaleResult.Grid_20200713000000000605_1.row name : result.Grid_20200713000000000605_1.row) {
+            kakaoApi2.getname(City + " " + name.rname, lat, lng, 20000).enqueue(new Callback<KakaoResult2>() {
+                /*위에 설명된 바와 같이
+                안심식당 이름으로 롯데리아가 왔다고 가정해보자
+                이경우 롯데리아는 아주 많은 지점이 있는데, 그냥 키워드 검색을 해버리면 현재 내 위치 주변의 지점이 아닌 다른곳의 정보를 알려준다
+                꼭 체인점이 아니더라도, 음식점 이름이 같으면 같은 문제가 발생한다
+                그렇기 때문에 내가 보고있는 곳의 좌표를 카카오 키워드 검색에 함께 보내주면 주변의 음식점이 결과로 반환된다
+                하지만 음식점 이름이 "강릉닭갈비" 와 같다면, 내 주소를 함께 보냈다 하더라도 "강릉"에 있는 "닭갈비"음식점들을 검색한다
+                이 문제를 고치기 위해 현재 내가 보고있는 도시의 이름과 함께 검색, 예를들어 "광진구 강릉닭갈비"할 경우 문제가 해결되었다
+                radius는 내 반경 20000미터내의 음식점을 검색한다는것이다.이후 마커찍을때 너무 먼곳은 필터링 할것이므로 정확도를 위해 넓게 잡았다
+                */
+                @Override
+                public void onResponse(Call<KakaoResult2> call, Response<KakaoResult2> response) {
+                    if (response.code() == 200) {
+                        KakaoResult2 result4 = response.body();
 
-        kakaoApi2.getname(City +" "+ name7, lat, lng, 20000).enqueue(new Callback<KakaoResult2>() {
-            /*위에 설명된 바와 같이
-            안심식당 이름으로 롯데리아가 왔다고 가정해보자
-            이경우 롯데리아는 아주 많은 지점이 있는데, 그냥 키워드 검색을 해버리면 현재 내 위치 주변의 지점이 아닌 다른곳의 정보를 알려준다
-            꼭 체인점이 아니더라도, 음식점 이름이 같으면 같은 문제가 발생한다
-            그렇기 때문에 내가 보고있는 곳의 좌표를 카카오 키워드 검색에 함께 보내주면 주변의 음식점이 결과로 반환된다
-            하지만 음식점 이름이 "강릉닭갈비" 와 같다면, 내 주소를 함께 보냈다 하더라도 "강릉"에 있는 "닭갈비"음식점들을 검색한다
-            이 문제를 고치기 위해 현재 내가 보고있는 도시의 이름과 함께 검색, 예를들어 "광진구 강릉닭갈비"할 경우 문제가 해결되었다
-            radius는 내 반경 20000미터내의 음식점을 검색한다는것이다.이후 마커찍을때 너무 먼곳은 필터링 할것이므로 정확도를 위해 넓게 잡았다
-            */
-            @Override
-            public void onResponse(Call<KakaoResult2> call, Response<KakaoResult2> response) {
-                if (response.code() == 200) {
-                    KakaoResult2 result4 = response.body();
 
+                        if (result4.getDocuments2().size() != 0) {
 
-                    if (result4.getDocuments2().size() != 0) {
-
-                        //검색결과가 제대로 나온경우 마커찍기에 들어간다
+                            //검색결과가 제대로 나온경우 마커찍기에 들어간다
                             SetMapMarker(result4);
 
 
-                    }
-                    if (result4.getDocuments2().size() == 0) {
-                        pd.dismiss();
-                        Log.d(String.valueOf(name7), "size 0");//에러 체크용 로그
-                    }
+                        }
+                        if (result4.getDocuments2().size() == 0) {
+                            pd.dismiss();
+                            Log.d(String.valueOf(name.rname), "size 0");//에러 체크용 로그
+                        }
 
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<KakaoResult2> call, Throwable t) {
 
                 }
-            }
-
-            @Override
-            public void onFailure(Call<KakaoResult2> call, Throwable t) {
-
-            }
-        });
-
+            });
+        }
     }
 
     private void SetMapMarker(KakaoResult2 result) {
