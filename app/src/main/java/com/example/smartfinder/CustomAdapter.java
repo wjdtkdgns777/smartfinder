@@ -13,10 +13,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
+
+import static android.content.ContentValues.TAG;
 
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
@@ -29,6 +36,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
         protected TextView phone;//전화번호
         protected TextView category;//카테고리
         protected Button url;//바로가기를 할수있는 버튼
+        protected ImageButton del;
 
 
 
@@ -39,6 +47,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
             this.phone = (TextView) view.findViewById(R.id.textView2);
             this.category = (TextView) view.findViewById(R.id.textView3);
             this.url = (Button) view.findViewById(R.id.button4);
+            this.del = (ImageButton) view.findViewById(R.id.Del);
             //각자 R에 정의된 보이는 부분들 연결
 
         }
@@ -99,8 +108,38 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
             }
         });
 
+        viewholder.del.setOnClickListener(new View.OnClickListener()
+        {//찜리스트에서 바로가기 버튼 눌렀을때
+            @Override
+            public void onClick(View v)
+            {
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();//파이어 베이스에서 찜리스트 받아옴
+                db.collection("users").document(mList.get(position).getDoc())
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error deleting document", e);
+                            }
+                        });
+
+
+
+
+            }
+        });
+
+
 
     }
+
 
     @Override
     public int getItemCount() {

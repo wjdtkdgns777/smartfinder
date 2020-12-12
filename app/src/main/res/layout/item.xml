@@ -52,7 +52,18 @@
         android:id="@+id/button4"
         android:background="#CCFFFFFF"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:text="바로가기" />
+
+    <ImageButton
+        android:id="@+id/Del"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="#CCFF0000"
+        android:paddingRight="9dp"
+        android:paddingLeft="9dp"
+
+        android:src="@drawable/ic_baseline_delete_forever_24" />
+
 
 </LinearLayout>

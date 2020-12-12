@@ -6,6 +6,15 @@ public class Dictionary {
     private String phone;
     private String category;
     private String url;
+    private String doc;
+
+    public String getDoc() {
+        return doc;
+    }
+
+    public void setDoc(String doc) {
+        this.doc = doc;
+    }
 
     public String getName2() {
         return name;
@@ -39,10 +48,11 @@ public class Dictionary {
         this.url = url;
     }
 
-    public Dictionary(String name, String phone, String category, String url) {//생성자
+    public Dictionary(String name, String phone, String category, String url,String doc) {//생성자
         this.name = name;
         this.phone = phone;
         this.category = category;
         this.url = url;
+        this.doc = doc;
     }
 }

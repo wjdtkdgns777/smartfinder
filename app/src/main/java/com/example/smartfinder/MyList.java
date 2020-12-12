@@ -57,7 +57,7 @@ public class MyList extends AppCompatActivity{//내 찜리스트 보여주는 �
                             for (QueryDocumentSnapshot document : task.getResult()) {
 
                             //파이어베이스에서 받아온 정보들의 개수만큼 Setlist
-                            Setlist(document.getString("Name"), document.getString("Phone"), document.getString("Category"), document.getString("URL"));
+                            Setlist(document.getString("Name"), document.getString("Phone"), document.getString("Category"), document.getString("URL"),document.getId());
 
                             }
 
@@ -72,12 +72,13 @@ public class MyList extends AppCompatActivity{//내 찜리스트 보여주는 �
     }
 
 
-    protected void Setlist(String name,String phone, String category,String url) {
-    Dictionary data = new Dictionary(name, phone, category, url);
+    protected void Setlist(String name,String phone, String category,String url,String doc) {
+    Dictionary data = new Dictionary(name, phone, category, url,doc);
         //파이어베이스에서 받아온 정보를 딕셔너리 형태로 data란 이름으로 저장
 
         mArrayList.add(data);//리스트에 데이터 넣기
         mAdapter.notifyDataSetChanged();
+
     }
 
 

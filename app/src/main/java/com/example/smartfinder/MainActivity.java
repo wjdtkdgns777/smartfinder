@@ -131,21 +131,17 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);//메뉴바 표시 구현
         setSupportActionBar(myToolbar);
 
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24); 추가구현 고민중인 부분,현재는 의미 없음
 
 
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
 
 
         ActionBar actionBar = getSupportActionBar();
 
-        actionBar.setDisplayHomeAsUpEnabled(true); // 뒤로가기 버튼 만들기
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24); //뒤로가기 버튼 이미지 지정
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -207,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                 @Override
                                 public void onSuccess(DocumentReference documentReference) {
-                                    Log.d("1", "DocumentSnapshot added with ID: " + documentReference.getId());//저장 잘되었는지 로그로 띄워 확인하는 부분
+                                    Toast.makeText(MainActivity.this, "내 리스트에 추가되었어요", Toast.LENGTH_SHORT).show();
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
@@ -352,7 +348,15 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
 
                         Ansim(City);//이 도시 이름으로 안심식당 api를 사용
+                        return;
+                    }
 
+                    else if (result.getDocuments().size() == 0) {//제대로 결과를 받았을 경우
+
+
+                        Toast.makeText(MainActivity.this, "검색 가능 구역이 아닙니다", Toast.LENGTH_SHORT).show();
+                        pd.dismiss();//주변에 없으므로 로딩바 해제
+                        return;
                     }
 
                 }
@@ -379,12 +383,12 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
                     if (result2.Grid_20200713000000000605_1.getRow().size() != 0) {//현재 내가 보는 도시로 검색했고, 안심식당 결과가 잘 온경우
                         //Log.d(String.valueOf((result2.Grid_20200713000000000605_1.Anisim_total())), "total"); (확인용으로 로그체크로 개수 새봤었음)
 
-                        Toast.makeText(MainActivity.this, City+"에서"+result2.Grid_20200713000000000605_1.Anisim_total()+"개의 결과가 검색되었습니다", Toast.LENGTH_LONG).show();//얼마나 안심식당이 있나 토스트메시지
+                        Toast.makeText(MainActivity.this, City+"에서"+result2.Grid_20200713000000000605_1.Anisim_total()+"개의 결과가 검색되었습니다", Toast.LENGTH_SHORT).show();//얼마나 안심식당이 있나 토스트메시지
                         if (result2.Grid_20200713000000000605_1.getRow() != null && result2.Grid_20200713000000000605_1.totalCnt > 0) {//만약 한개 이상 있다면
 
 
                                KakaoRestaurant(result2);//그 개수만큼 카카오 키워드검색 api를 사용해서 정보를 얻음
-
+                                return;
 
 
                         }
@@ -392,8 +396,9 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
                     if (result2.Grid_20200713000000000605_1.getRow().size() == 0) {//없으면 없다고 알림
 
-                        Toast.makeText(MainActivity.this, "주변에 안심식당이 없습니다", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "주변에 안심식당이 없습니다", Toast.LENGTH_SHORT).show();
                         pd.dismiss();//주변에 없으므로 로딩바 해제
+                        return;
                     }
                 }
             }
@@ -435,12 +440,12 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
                             //검색결과가 제대로 나온경우 마커찍기에 들어간다
                             SetMapMarker(result4);
-
+                            return;
 
                         }
                         if (result4.getDocuments2().size() == 0) {
                             pd.dismiss();
-                            Log.d(String.valueOf(name.rname), "size 0");//에러 체크용 로그
+                            return;
                         }
 
 
@@ -460,7 +465,7 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
         pd.dismiss();//로딩바 해제
         int MyDistance = Integer.parseInt(result.getDocuments2().get(0).distance);//음식점과 나로부터의 거리
 
-        if (MyDistance < 1500) {//현재 위치에서 1500미터 안의 음식점들만 마커를 찍어줘 어플의 부하를 줄임
+        if (MyDistance < 2000) {//현재 위치에서 1500미터 안의 음식점들만 마커를 찍어줘 어플의 부하를 줄임
             //Log.d(String.valueOf(result.meta.same_name.keyword), "keyword"); 로그체크
             //Log.d(String.valueOf(result.getDocuments2().get(0).place_name), "name"); 로그체크
 
@@ -477,6 +482,7 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
             marker.setOnClickListener(this);//마커 리스너
             markerList.add(marker);//마커 리스트에 저장
+            return;
         }
 
 
