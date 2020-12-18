@@ -26,6 +26,7 @@ https://youtu.be/pRZjgaug47A
 PS. 앱 첫 설치후 구동시에만 네이버맵의 로딩시간이 약간 걸릴수도 있습니다.
 
 찜리스트의 경우 처음에는 비어있기에 흰 화면으로 보이고, 새롭게 추가하면 리스트를 볼수 있습니다.
+
 찜리스트에서 가게를 삭제 할경우 찜리스트를 나갔다 오면 업데이트가 되어있는것을 확인할수 있습니다.
 
 This application shows nearby "Ansim Restaurant", which is selected by South korea government for offering extra dishes, keep spoons clean, and restaurnat workers always wear masks.
