@@ -23,6 +23,10 @@ https://youtu.be/pRZjgaug47A
 마커가 과다하게 찍히는것을 방지하게 위해, 내가 보고있는곳 주변 2000m의 음식점만 나오도록 해주었기에 주변에 안심식당이 보이지 않을수도 있다.
 혹시 제 프로젝트를 사용하실경우 api key들을 바꾸는것을 잊지 말아주세요!
 
+PS. 앱 첫 설치후 구동시에만 네이버맵의 로딩시간이 약간 걸릴수도 있습니다.
+찜리스트의 경우 처음에는 비어있기에 빈 화면으로 보이고, 새롭게 추가하면 보이는데, 이때 삭제를 할경우
+찜리스트를 나갔다 오면 업데이트가 되어있는것을 확인할수 있습니다.
+
 This application shows nearby "Ansim Restaurant", which is selected by South korea government for offering extra dishes, keep spoons clean, and restaurnat workers always wear masks.
 
 I made this to search nearby Ansim Restaurant more directly, unlike Public Dataset offered by government.
